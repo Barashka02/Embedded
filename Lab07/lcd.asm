@@ -56,6 +56,7 @@ wdat1:	movx	a,@r0		; r0 has no relevance here
 ;   outputs: none
 ;   destroys: r0, r2, r3, dptr
 ;
+
 init_lcd:
 	mov	p4,#not LCD_RESET
 	mov	emi0cf,#00101011b       ; B5: P4-7, B4: multiplexed, B3-2: split bank
@@ -114,9 +115,8 @@ byte_loop:
 
 blank_screen:
 	mov	dptr,#0
-	mov	a,#1
+	mov	a,#0
 blank_loop:
-	rr a
 	movx	@dptr,a
 	inc	dptr
 	mov	b,dph
