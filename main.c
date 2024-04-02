@@ -149,7 +149,7 @@ void main(void)
 				{};
 				RCAP2H = -2097 >> 8;
                 RCAP2L = -2097; 
-				duration = 659 * (1/(6.0));              // Start high frequency
+				duration = 659 * (1/6.0);              // Start high frequency
                 maxDuration = duration; // Reset maxDuration as well for scaling
 
 				while(duration)		//D
