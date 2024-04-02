@@ -48,7 +48,8 @@ void main(void)
     TR1 = 1;
     while (TF1 == 0) { }
     while ((OSCXCN & 0x80) == 0) { }
-    OSCICN = 0x08;    // Engage! Now using 22.1184MHz
+	CKCON = 0x20;
+    OSCICN = 0x08;    // Engage! Now using 22.1184MHzi
     T2CON = 4;        // Timer 2, auto reload
     RCAP2H = -1;
     REF0CN = 3;       // Turn on voltage reference
@@ -60,8 +61,106 @@ void main(void)
         if (F_BUTTON && !f_pressed) { // If F_BUTTON is pressed and was not pressed before
             f_pressed = 1; // Set the flag indicating the button is pressed
             if (duration == 0) {
-                RCAP2L = -144;              // Start high frequency
-                duration = maxDuration = 800; // Reset maxDuration as well for scaling
+				while(duration)		//A
+				{}
+				RCAP2H = -3142 >> 8;
+                RCAP2L = -3142; 
+				duration = 440/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+				
+				while(duration)		//B	
+				{};
+				RCAP2H = -2799 >> 8;
+                RCAP2L = -2799; 
+				duration = 466/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+				
+				while(duration)		//D
+				{};		
+				RCAP2H = -2354 >> 8;
+                RCAP2L = -2354; 
+				duration = 587/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+				
+				while(duration)		//B	
+				{};
+				RCAP2H = -2799 >> 8;
+                RCAP2L = -2799; 
+				duration = 466/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+				
+				while(duration)		//F#
+				{};
+				RCAP2H = -1868 >> 8;
+                RCAP2L = -1868; 
+				duration = 740 * (3/6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+				
+				while(duration)		//F#
+				{};
+				RCAP2H = -1868 >> 8;
+                RCAP2L = -1868; 
+				duration = 740 * (1/6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+				
+				while(duration)		//E
+				{};
+				RCAP2H = -2097 >> 8;
+                RCAP2L = -2097; 
+				duration = 659  ;             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				while(duration)		//A
+				{}
+				RCAP2H = -3142 >> 8;
+                RCAP2L = -3142; 
+				duration = 440/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+				
+				while(duration)		//B	
+				{};
+				RCAP2H = -2799 >> 8;
+                RCAP2L = -2799; 
+				duration = 466/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				while(duration)		//c
+				{};
+				RCAP2H = -2494 >> 8;
+                RCAP2L = -2494; 
+				duration = 554/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				while(duration)		//A
+				{}
+				RCAP2H = -3142 >> 8;
+                RCAP2L = -3142; 
+				duration = 440/(6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				while(duration)		//E
+				{};
+				RCAP2H = -2097 >> 8;
+                RCAP2L = -2097; 
+				duration = 659 * (3/6.0);             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				while(duration)		//E
+				{};
+				RCAP2H = -2097 >> 8;
+                RCAP2L = -2097; 
+				duration = 659 * (1/(6.0));              // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				while(duration)		//D
+				{};
+				RCAP2H = -2354 >> 8;
+                RCAP2L = -2354; 
+				duration = 587;             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+
+		
             }
         }
         if (!F_BUTTON && f_pressed) { // If F_BUTTON is released
@@ -71,8 +170,21 @@ void main(void)
         if (B_BUTTON && !b_pressed) { // If B_BUTTON is pressed and was not pressed before
             b_pressed = 1; // Set the flag indicating the button is pressed
             if (duration == 0) {
-                RCAP2L = -181;              // Start low frequency
-                duration = maxDuration = 635; // Reset maxDuration as well for scaling
+                while(duration)		//A
+				{};
+				RCAP2H = -1664 >> 8;
+                RCAP2L = -1664; 
+				duration = 831;             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				while(duration)		//E
+				{}
+				RCAP2H = -2097 >> 8;
+                RCAP2L = -2097; 
+				duration = 659;             // Start high frequency
+                maxDuration = duration; // Reset maxDuration as well for scaling
+
+				
             }
         }
         if (!B_BUTTON && b_pressed) { // If B_BUTTON is released
