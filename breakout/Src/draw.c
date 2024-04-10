@@ -131,8 +131,8 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	}
 //-----------------------------------------
 //Writing the players and their balls count
-
 	i = 98;
+
 	disp_char(6, i, 'P');
 	disp_char(6, i+7, '0' + cur_player);
 
@@ -160,4 +160,20 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	}
 
 
+}
+
+//Drawing the end game state
+
+void disp_end_game()
+{
+	int i = 20;
+	disp_char(3, i, 'G');
+	disp_char(3, i+7, 'A');
+	disp_char(3, i+14, 'M');
+	disp_char(3, i+21, 'E');
+
+	disp_char(5, i, 'O');
+	disp_char(5, i+7, 'V');
+	disp_char(5, i+14, 'E');
+	disp_char(5, i+21, 'R');
 }

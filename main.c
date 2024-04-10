@@ -7,7 +7,7 @@ unsigned int duration = 0;              // Number of cycles left to output
 // New variables for amplitude scaling
 unsigned int maxDuration = 800; // Initial max duration for scaling
 unsigned char maxAmplitude = 255; // Maximum amplitude. Adjust according to your needs
-unsigned char scaledAmplitude = 0;
+int scaledAmplitude = 0;
 
 
 void timer2(void) interrupt 5
@@ -15,14 +15,14 @@ void timer2(void) interrupt 5
     TF2 = 0;
     
     // Scale the sine value based on remaining duration
-    scaledAmplitude = (unsigned char)((long)sine[phase] * duration / maxDuration);
+    scaledAmplitude = (unsigned char)(((long)sine[phase]-128) * duration / maxDuration);
     
     // Ensure the scaled amplitude does not exceed the DAC range
     if (scaledAmplitude > maxAmplitude) {
         scaledAmplitude = maxAmplitude;
     }
     
-    DAC0H = scaledAmplitude;
+    DAC0H = scaledAmplitude+128;
     
     if (phase < sizeof(sine)-1) {
         phase++;
@@ -149,7 +149,7 @@ void main(void)
 				{};
 				RCAP2H = -2097 >> 8;
                 RCAP2L = -2097; 
-				duration = 659 * (1/6.0);              // Start high frequency
+				duration = 659 / 6.0;              // Start high frequency
                 maxDuration = duration; // Reset maxDuration as well for scaling
 
 				while(duration)		//D

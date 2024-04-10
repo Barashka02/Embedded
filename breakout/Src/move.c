@@ -1,6 +1,10 @@
+#include <C8051F020.h>
 #include "../Inc/lcd.h"
 #include "../Inc/draw.h"
 
+//------------------------------------------------------------------
+//SETTING UP BALL 
+//------------------------------------------------------------------
 
 code unsigned char ball[] = {0x0e, 0x1f, 0x1f, 0x1f, 0x0e};
 char draw_ball(int x, int y)
@@ -12,7 +16,7 @@ char draw_ball(int x, int y)
 	//if(x <= 4 || x >= 76 || y <= 2 || y >= 59) return 1;
 
 	if(x <= 4 || x >= 76) return 1; // The ball has hit the right or left wall
-	else if(y >= 59) return 2; 		//The ball has hit the top wall
+	else if(y >= 63) return 2; 		//The ball has hit the top wall
 	else if(y <= 2) return 3;		//The ball has gone off the botton 
 	
 	//shifting to measure top left of ball
@@ -40,16 +44,61 @@ char draw_ball(int x, int y)
 		return hit;
 }
 
-void move_ball(x_move, y_move)
-{
-	char hit=0;
 
+void move_ball(int *cur_x, int *cur_y, int *x_vel, int *y_vel, char *ball_cnt, int *player)
+{	
+	char hit_code;	
+	int new_x, new_y;
+	//setting new values of x and y;
+	new_x = *cur_x + *x_vel;
+	new_y = *cur_y + *y_vel;
 
+	hit_code = draw_ball(new_x, new_y);
+	
+	*cur_x = new_x;
+	*cur_y = new_y;
+	
+	//if the ball hits the walls
+	if(hit_code == 1)  
+	{
+		*x_vel = -1* *x_vel;
+	}
+
+	//if the ball hits the top
+	else if(hit_code == 2)
+	{
+		*y_vel = -1* *y_vel;
+	}
+
+	//if the ball goes out
+	else if(hit_code == 3)
+	{	
+		
+		*ball_cnt = *ball_cnt -1;  //remove 1 ball from player
+
+		if(*ball_cnt == 0)
+		{
+			if(*player == 1)
+			{
+				*player = 2;
+			}
+			else
+			{
+				*player = 1;
+			}
+			disp_end_game();
+		}
+		
+	}
 }
 
 		   // setting up timer 2
-   T2CON = 0x00;
+//   T2CON = 0x00;
 
    //RCAP2H = 0xF9;  // This overflows 512 times in 400 milisecond. 
    //RCAP2L = 0x40;
 
+
+//------------------------------------------------------------------
+//SETTING UP THE PADDLE
+//------------------------------------------------------------------

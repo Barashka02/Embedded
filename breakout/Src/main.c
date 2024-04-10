@@ -1,6 +1,18 @@
 #include <C8051F020.h>
 #include "../Inc/lcd.h"
 #include "../Inc/draw.h"
+#include "../Inc/move.h"
+
+
+//------------------------------------------------------
+//GLOBAL VARIABLES
+//------------------------------------------------------
+int x_vel = 2;
+int y_vel = 1;
+int x_pos = 40;
+int y_pos = 32;
+char ball_cnt = 3;
+int player = 1;
 
 /*
 bit toggle = 1;
@@ -18,10 +30,16 @@ char temp_tens = 0;
 char temp_ones = 0;
 */
 
-void timer2(void) interrupt 5
-{
-    TF2 = 0;
+void timer2(void) interrupt 5{
+	TF2 = 0;
+	//blank_screen();
+	move_ball(&x_pos, &y_pos, &x_vel, &y_vel, &ball_cnt, &player);
+	draw_borders();
+	draw_scores(1, 2, 1, 3);
+	refresh_screen();
 }
+
+
 
 void main()
 {
@@ -38,15 +56,29 @@ void main()
    OSCICN = 8;    // switch over to 22.1184MHz
    SCON0 = 0x50;  // 8-bit, variable baud, receive enable
    TH1 = -6;      // 9600 baud
+	
+	//setting up timer 2 (16 bit 10 milisecond auto reload);
+	IE = 0xA0;
+	T2CON = 0X00;
 
+	RCAP2H = -0xB8; // Assign the high byte
+	RCAP2L = -0x00; // Assign the low byte
+
+	//setting up adc
+	ADC0CN = 0x8C;
+	REF0CN = 0x07;
+	
+	TR2 = 1;
+
+	ADC0CF = 0x40;
+	AMX0SL = 0x0;
 	init_lcd();
 	draw_borders();
-	
-
 	draw_scores(1, 2, 1, 3);
 	refresh_screen();
 	while(1)
 	{
+	
 	}
 }
 /*
