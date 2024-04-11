@@ -7,33 +7,48 @@
 //------------------------------------------------------
 //GLOBAL VARIABLES
 //------------------------------------------------------
-int x_vel = 2;
-int y_vel = 1;
+int x_vel = -2;
+int y_vel = -1;
 int x_pos = 40;
 int y_pos = 32;
 char ball_cnt = 3;
 int player = 1;
 
-/*
-bit toggle = 1;
+char count;
+char paddle_size = 8;
+char speed = 49;
+char pot_value = 0;
+char pot_avg = 0;
+long data_out;
 
 
-long temp_value = 0x00;
-long pot_value = 0x00;
-long temp_avg = 0x00;
-long pot_avg = 0x00;
-int index = 0;
-bit averaged = 0;
-char tens = 0;
-char ones = 0;
-char temp_tens = 0;
-char temp_ones = 0;
-*/
+void adc_int() interrupt 15
+{
+	AD0INT = 0;
+	data_out = (ADC0H << 8) | ADC0L;
 
+	data_out = (((72 - paddle_size)+1)*data_out) >> 12;	// convert POT value to a temp value between 0-30
+	pot_value += data_out;		// Desired range is 0 to max width - paddle size
+	count++;
+
+	if(count % 7 == 0)
+	{
+		//take the average.
+		pot_avg = pot_value >> 3;
+		pot_value = 0;
+	}
+}
 void timer2(void) interrupt 5{
 	TF2 = 0;
-	//blank_screen();
+
+	if(count != speed)
+	{
+	return;
+	}
+	count = 0;
+	blank_screen();
 	move_ball(&x_pos, &y_pos, &x_vel, &y_vel, &ball_cnt, &player);
+	draw_paddle(pot_avg, paddle_size);
 	draw_borders();
 	draw_scores(1, 2, 1, 3);
 	refresh_screen();
@@ -46,7 +61,7 @@ void main()
    WDTCN = 0xde;  // disable watchdog
    WDTCN = 0xad;
    XBR2 = 0x40;   // enable port output
-   XBR0 = 4;      // enable uart 0
+   //XBR0 = 4;      // enable uart 0
    OSCXCN = 0x67; // turn on external crystal
    TMOD = 0x20;   // wait 1ms using T1 mode 2
    TH1 = -167;    // 2MHz clock, 167 counts - 1ms
@@ -54,24 +69,24 @@ void main()
    while ( TF1 == 0 ) { }          // wait 1ms
    while ( !(OSCXCN & 0x80) ) { }  // wait till oscillator stable
    OSCICN = 8;    // switch over to 22.1184MHz
-   SCON0 = 0x50;  // 8-bit, variable baud, receive enable
-   TH1 = -6;      // 9600 baud
-	
+   //SCON0 = 0x50;  // 8-bit, variable baud, receive enable
+   //TH1 = -6;      // 9600 baud
+   	IE = 0xA0;
+	EIE2 = 0x02;
 	//setting up timer 2 (16 bit 10 milisecond auto reload);
-	IE = 0xA0;
 	T2CON = 0X00;
 
-	RCAP2H = -0xB8; // Assign the high byte
-	RCAP2L = -0x00; // Assign the low byte
+	RCAP2H = -2211 >> 8; // Assign the high byte
+	RCAP2L = -2211; // Assign the low byte
 
 	//setting up adc
 	ADC0CN = 0x8C;
 	REF0CN = 0x07;
+	ADC0CF = 0x40; //setting values to read from the pot
+	AMX0SL = 0x0;
 	
 	TR2 = 1;
 
-	ADC0CF = 0x40;
-	AMX0SL = 0x0;
 	init_lcd();
 	draw_borders();
 	draw_scores(1, 2, 1, 3);
@@ -81,6 +96,9 @@ void main()
 	
 	}
 }
+
+
+
 /*
 //display character function
 void disp_char(unsigned char row, unsigned char column, char charachter)

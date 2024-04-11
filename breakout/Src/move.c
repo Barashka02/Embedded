@@ -16,8 +16,8 @@ char draw_ball(int x, int y)
 	//if(x <= 4 || x >= 76 || y <= 2 || y >= 59) return 1;
 
 	if(x <= 4 || x >= 76) return 1; // The ball has hit the right or left wall
-	else if(y >= 63) return 2; 		//The ball has hit the top wall
-	else if(y <= 2) return 3;		//The ball has gone off the botton 
+	else if(y <= 2) return 2;		//The ball has gone off the botton 
+	else if(y >= 63) return 3; 		//The ball has hit the top wall
 	
 	//shifting to measure top left of ball
 	col = x-2;
@@ -92,7 +92,8 @@ void move_ball(int *cur_x, int *cur_y, int *x_vel, int *y_vel, char *ball_cnt, i
 	}
 }
 
-		   // setting up timer 2
+
+	   // setting up timer 2
 //   T2CON = 0x00;
 
    //RCAP2H = 0xF9;  // This overflows 512 times in 400 milisecond. 

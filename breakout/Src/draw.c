@@ -54,17 +54,18 @@ void draw_borders()
 	for(i=1; i<80; i++)
 	{
 		//drawing the top line
-	screen[i] = 0x03;
+	screen[i] |= 0x03;
 
 	}
-	for(j=0; j<63; j++)
+	for(j=0; j<8; j++)
 	{
 		//drawing the left line
-	screen[j*128] = 0xff;
-	screen[(j)*128+1] = 0xff;
+		
+	screen[j*128] |= 0xff;
+	screen[(j)*128+1] |= 0xff;
 		//drawing the right line
-	screen[(j)*128+78] = 0xff;
-	screen[(j)*128+79] = 0xff;
+	screen[(j)*128+78] |= 0xff;
+	screen[(j)*128+79] |= 0xff;
 
 	}
 }
@@ -167,6 +168,8 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 void disp_end_game()
 {
 	int i = 20;
+	
+	TR2 = 0;
 	disp_char(3, i, 'G');
 	disp_char(3, i+7, 'A');
 	disp_char(3, i+14, 'M');
@@ -177,3 +180,17 @@ void disp_end_game()
 	disp_char(5, i+14, 'E');
 	disp_char(5, i+21, 'R');
 }
+
+void draw_paddle(char position, char size)
+{	
+	int i;
+	position = (int)position;
+	size = (int)size;
+	for(i = 898; i < size; i++)
+	{
+		screen[i+position] |= 0xff;
+	}
+	//data_out = (31*data_out) >> 12; // convert POT value to a temp value between 0-30
+	//pot_value += 55 + data_out; // Desired range is 55-85, hence the 55 value
+}
+	
