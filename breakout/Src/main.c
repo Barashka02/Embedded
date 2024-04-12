@@ -15,9 +15,9 @@ char ball_cnt = 3;
 int player = 1;
 
 char count;
-char paddle_size = 8;
+int paddle_size = 16;
 char speed = 49;
-char pot_value = 0;
+int pot_value = 0;
 char pot_avg = 0;
 long data_out;
 
@@ -27,7 +27,8 @@ void adc_int() interrupt 15
 	AD0INT = 0;
 	data_out = (ADC0H << 8) | ADC0L;
 
-	data_out = (((72 - paddle_size)+1)*data_out) >> 12;	// convert POT value to a temp value between 0-30
+	data_out = (data_out * ((85L - paddle_size))) >> 12;
+	//data_out = (((72 - paddle_size)+1)*data_out) >> 12;	// convert POT value to a temp value between 0-30
 	pot_value += data_out;		// Desired range is 0 to max width - paddle size
 	count++;
 
@@ -47,8 +48,9 @@ void timer2(void) interrupt 5{
 	}
 	count = 0;
 	blank_screen();
-	move_ball(&x_pos, &y_pos, &x_vel, &y_vel, &ball_cnt, &player);
 	draw_paddle(pot_avg, paddle_size);
+	move_ball(&x_pos, &y_pos, &x_vel, &y_vel, &ball_cnt, &player);
+	//draw_paddle(0, 20);
 	draw_borders();
 	draw_scores(1, 2, 1, 3);
 	refresh_screen();

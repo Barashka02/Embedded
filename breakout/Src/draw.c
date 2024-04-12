@@ -183,12 +183,14 @@ void disp_end_game()
 
 void draw_paddle(char position, char size)
 {	
+	
 	int i;
+	
 	position = (int)position;
 	size = (int)size;
-	for(i = 898; i < size; i++)
+	for(i = 898; i < (898 + size + 1); i++)
 	{
-		screen[i+position] |= 0xff;
+		screen[i + position] |= 0xC0;
 	}
 	//data_out = (31*data_out) >> 12; // convert POT value to a temp value between 0-30
 	//pot_value += 55 + data_out; // Desired range is 55-85, hence the 55 value

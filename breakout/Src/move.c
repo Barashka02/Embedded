@@ -17,7 +17,7 @@ char draw_ball(int x, int y)
 
 	if(x <= 4 || x >= 76) return 1; // The ball has hit the right or left wall
 	else if(y <= 2) return 2;		//The ball has gone off the botton 
-	else if(y >= 63) return 3; 		//The ball has hit the top wall
+	else if(y >= 61) return 3; 		//The ball has hit the top wall
 	
 	//shifting to measure top left of ball
 	col = x-2;
@@ -31,7 +31,7 @@ char draw_ball(int x, int y)
 	{
 		int mask = (int)ball[j]<<shift;
 		hit |= screen[i]&(unsigned char)mask;
-		screen[i] = mask;
+		screen[i] |= mask;
 
 		//checking and writing the ball (overflow on page)
 		if(mask & 0xff00)
@@ -90,6 +90,11 @@ void move_ball(int *cur_x, int *cur_y, int *x_vel, int *y_vel, char *ball_cnt, i
 		}
 		
 	}
+	else if(hit_code >= 898 || hit_code <= (898 + 74))
+	{
+		*y_vel = -1* *y_vel;
+	}
+	
 }
 
 
