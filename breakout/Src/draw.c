@@ -44,6 +44,30 @@ void disp_char(unsigned char row, unsigned char column, char charachter)
 		screen[i + k] |= font5x8[j+k];
 		}
 }
+void draw_bricks()
+{
+    int i, j, k;
+    for (i = 0; i < 11; i++)
+    {
+        for (j = 0; j < 5; j++)
+        {
+            int index = (j / 2) * 128 + i * 7 + 131;  // common index calculation
+            int mask = (j % 2 == 0) ? 0x07 : 0x70;   // decide the mask based on even/odd row
+
+            for (k = 0; k < 6; k++)
+            {
+                if (bricks[i][j] == 0)
+                {
+                    screen[index + k] &= ~mask;  // clear bits using negated mask
+                }
+                else if (bricks[i][j] == 1)
+                {
+                    screen[index + k] |= mask;  // set bits using mask
+                }
+            }
+        }
+    }
+}
 
 
 //---------------------------------------------------------
@@ -75,7 +99,7 @@ void draw_borders()
 void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 {	
 	//initialization
-	int i = 83; //starting point for "HIGHI"
+	int i = 85; //starting point for "HIGHI"
 	int thousands, hundreds, tens, ones;
 	
 	//writing the "HIGH"
@@ -93,7 +117,7 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	ones = high_score % 10;
 	
 	//writing the high score
-	i = 90; //"Starting point for the score"
+	i = 92; //"Starting point for the score"
 	disp_char(1, i, '0' + thousands);
 	disp_char(1, i+7, '0' + hundreds);
 	disp_char(1, i+14, '0' + tens);
@@ -106,7 +130,7 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 //-----------------------------------------
 //Writing the Current Score
 	
-	i= 80;
+	i= 82;
 	disp_char(3, i, '-');
 	disp_char(3, i+7, 'S');
 	disp_char(3, i+14, 'C');
@@ -122,7 +146,7 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	ones = cur_score % 10;
 	
 	//writing the high score
-	i = 90;
+	i = 92;
 	disp_char(4, i, '0' + thousands);
 	disp_char(4, i+7, '0' + hundreds);
 	disp_char(4, i+14, '0' + tens);
@@ -134,13 +158,13 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	}
 //-----------------------------------------
 //Writing the players and their balls count
-	i = 98;
+	i = 100;
 
 	disp_char(6, i, 'P');
 	disp_char(6, i+7, '0' + cur_player);
 
 	//drawing the leftover balls
-	i= 93;
+	i= 95;
 	if(player_ball == 3)
 	{
 	//hit_no_care = draw_ball(int x, int y
@@ -169,7 +193,7 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 
 void disp_end_game()
 {
-	int i = 20;
+	int i = 30;
 	
 	//TR2 = 0;
 	run = 0;

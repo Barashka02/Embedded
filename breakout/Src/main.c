@@ -94,6 +94,7 @@ void main()
 			blank_screen();
 			draw_borders();
 			draw_paddle();
+			draw_bricks();
 			move_ball();
 			draw_scores(1, 2, 1, 3);
 			

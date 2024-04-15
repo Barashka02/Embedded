@@ -114,7 +114,14 @@ void move_ball()
 			x_vel = -1 * x_vel;
 		}
 	}
+	else if(hit_code > 3)
+	{
+		int x =0;	
+	}
+	else if(hit_code > 3 && y_vel < 0)
+	{
 
+	}
 
 	
 }
