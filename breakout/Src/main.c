@@ -2,24 +2,11 @@
 #include "../Inc/lcd.h"
 #include "../Inc/draw.h"
 #include "../Inc/move.h"
-
+#include "../Inc/global.h"
 
 //------------------------------------------------------
 //GLOBAL VARIABLES
 //------------------------------------------------------
-int x_vel = -2;
-int y_vel = -1;
-int x_pos = 40;
-int y_pos = 32;
-char ball_cnt = 3;
-int player = 1;
-
-char count;
-int paddle_size = 16;
-char speed = 49;
-int pot_value = 0;
-char pot_avg = 0;
-long data_out;
 
 
 void adc_int() interrupt 15
@@ -41,19 +28,25 @@ void adc_int() interrupt 15
 }
 void timer2(void) interrupt 5{
 	TF2 = 0;
-
-	if(count != speed)
-	{
-	return;
+	if(count == speed) {
+    	count = 0;
+    	move_on = 1; // Will allow the game loop to advance
 	}
-	count = 0;
-	blank_screen();
-	draw_paddle(pot_avg, paddle_size);
-	move_ball(&x_pos, &y_pos, &x_vel, &y_vel, &ball_cnt, &player);
+	else {
+    	move_on = 0; // Prevents the game loop from advancing too quickly
+	}
+
+
+//	count = 0;
+//	blank_screen();
+//	draw_paddle(pot_avg, paddle_size);
+	
+//	move_ball();
+	
 	//draw_paddle(0, 20);
-	draw_borders();
-	draw_scores(1, 2, 1, 3);
-	refresh_screen();
+	//draw_borders();
+	//draw_scores(1, 2, 1, 3);
+	//refresh_screen();
 }
 
 
@@ -90,13 +83,31 @@ void main()
 	TR2 = 1;
 
 	init_lcd();
-	draw_borders();
-	draw_scores(1, 2, 1, 3);
-	refresh_screen();
+	//draw_borders();
+	//draw_scores(1, 2, 1, 3);
+	//refresh_screen();
+
+	//---------------
 	while(1)
-	{
-	
+	{	
+		if(run == 1){
+			blank_screen();
+			draw_borders();
+			draw_paddle();
+			move_ball();
+			draw_scores(1, 2, 1, 3);
+			
+			while(move_on == 0)
+			{}
+			refresh_screen();
+
+		}
 	}
+	//------------------
+	//while(1)
+	//{
+	
+	//}
 }
 
 

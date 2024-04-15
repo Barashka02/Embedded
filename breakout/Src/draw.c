@@ -1,5 +1,7 @@
+
 #include <C8051F020.h>
 #include "../Inc/lcd.h"
+#include "../Inc/global.h"
 
 
 
@@ -169,7 +171,9 @@ void disp_end_game()
 {
 	int i = 20;
 	
-	TR2 = 0;
+	//TR2 = 0;
+	run = 0;
+
 	disp_char(3, i, 'G');
 	disp_char(3, i+7, 'A');
 	disp_char(3, i+14, 'M');
@@ -181,16 +185,16 @@ void disp_end_game()
 	disp_char(5, i+21, 'R');
 }
 
-void draw_paddle(char position, char size)
+void draw_paddle()
 {	
 	
 	int i;
 	
-	position = (int)position;
-	size = (int)size;
-	for(i = 898; i < (898 + size + 1); i++)
+	pot_avg = (int)pot_avg;
+	paddle_size = (int)paddle_size;
+	for(i = 898; i < (898 + paddle_size + 1); i++)
 	{
-		screen[i + position] |= 0xC0;
+		screen[i + pot_avg] |= 0xC0;
 	}
 	//data_out = (31*data_out) >> 12; // convert POT value to a temp value between 0-30
 	//pot_value += 55 + data_out; // Desired range is 55-85, hence the 55 value
