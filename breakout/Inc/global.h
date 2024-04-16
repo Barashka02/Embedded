@@ -15,8 +15,8 @@ extern int pot_value;
 extern char pot_avg;
 
 //array for bricks
-extern xdata char bricks[11][5];
-
+extern xdata char bricks[13][5];
+extern int hit_location;
 
 //miscelanout neede for computations
 extern long data_out;

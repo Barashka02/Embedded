@@ -14,7 +14,7 @@ void adc_int() interrupt 15
 	AD0INT = 0;
 	data_out = (ADC0H << 8) | ADC0L;
 
-	data_out = (data_out * ((85L - paddle_size))) >> 12;
+	data_out = (data_out * ((88L - paddle_size))) >> 12;
 	//data_out = (((72 - paddle_size)+1)*data_out) >> 12;	// convert POT value to a temp value between 0-30
 	pot_value += data_out;		// Desired range is 0 to max width - paddle size
 	count++;
@@ -98,7 +98,7 @@ void main()
 			move_ball();
 			draw_scores(1, 2, 1, 3);
 			
-			while(move_on == 0)
+ 			while(move_on == 0)
 			{}
 			refresh_screen();
 

@@ -47,14 +47,16 @@ void disp_char(unsigned char row, unsigned char column, char charachter)
 void draw_bricks()
 {
     int i, j, k;
-    for (i = 0; i < 11; i++)
+    for (i = 0; i < 13; i++)
     {
         for (j = 0; j < 5; j++)
         {
-            int index = (j / 2) * 128 + i * 7 + 131;  // common index calculation
+            // Adjusted index calculation to fit bricks of width 5 with 1 pixel gap
+            int index = (j / 2) * 128 + i * 6 + 131;  // Now `i * 6` instead of `i * 7`
+
             int mask = (j % 2 == 0) ? 0x07 : 0x70;   // decide the mask based on even/odd row
 
-            for (k = 0; k < 6; k++)
+            for (k = 0; k < 5; k++)  // Draw each brick 5 pixels wide
             {
                 if (bricks[i][j] == 0)
                 {
@@ -70,6 +72,7 @@ void draw_bricks()
 }
 
 
+
 //---------------------------------------------------------
 //GLOBAL FUNCTIONS
 //---------------------------------------------------------
@@ -77,7 +80,7 @@ void draw_bricks()
 void draw_borders()
 {
 	int i, j;
-	for(i=1; i<80; i++)
+	for(i=1; i<82; i++)
 	{
 		//drawing the top line
 	screen[i] |= 0x03;
@@ -90,8 +93,8 @@ void draw_borders()
 	screen[j*128] |= 0xff;
 	screen[(j)*128+1] |= 0xff;
 		//drawing the right line
-	screen[(j)*128+78] |= 0xff;
-	screen[(j)*128+79] |= 0xff;
+	screen[(j)*128+81] |= 0xff;
+	screen[(j)*128+82] |= 0xff;
 
 	}
 }
@@ -99,7 +102,7 @@ void draw_borders()
 void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 {	
 	//initialization
-	int i = 85; //starting point for "HIGHI"
+	int i = 86; //starting point for "HIGHI"
 	int thousands, hundreds, tens, ones;
 	
 	//writing the "HIGH"
@@ -117,20 +120,20 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	ones = high_score % 10;
 	
 	//writing the high score
-	i = 92; //"Starting point for the score"
+	i = 93; //"Starting point for the score"
 	disp_char(1, i, '0' + thousands);
 	disp_char(1, i+7, '0' + hundreds);
 	disp_char(1, i+14, '0' + tens);
 	disp_char(1, i+21, '0' + ones);
 	
-	for(i = 80; i < 126; i++)
+	for(i = 81; i < 126; i++)
 	{
 		disp_char(2, i, '-');
 	}
 //-----------------------------------------
 //Writing the Current Score
 	
-	i= 82;
+	i= 83;
 	disp_char(3, i, '-');
 	disp_char(3, i+7, 'S');
 	disp_char(3, i+14, 'C');
@@ -146,25 +149,25 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	ones = cur_score % 10;
 	
 	//writing the high score
-	i = 92;
+	i = 93;
 	disp_char(4, i, '0' + thousands);
 	disp_char(4, i+7, '0' + hundreds);
 	disp_char(4, i+14, '0' + tens);
 	disp_char(4, i+21, '0' + ones);
 	
-	for(i = 80; i < 126; i++)
+	for(i = 81; i < 126; i++)
 	{
 		disp_char(5, i, '-');
 	}
 //-----------------------------------------
 //Writing the players and their balls count
-	i = 100;
+	i = 101;
 
 	disp_char(6, i, 'P');
 	disp_char(6, i+7, '0' + cur_player);
 
 	//drawing the leftover balls
-	i= 95;
+	i= 96;
 	if(player_ball == 3)
 	{
 	//hit_no_care = draw_ball(int x, int y
@@ -197,7 +200,7 @@ void disp_end_game()
 	
 	//TR2 = 0;
 	run = 0;
-
+	
 	disp_char(3, i, 'G');
 	disp_char(3, i+7, 'A');
 	disp_char(3, i+14, 'M');
@@ -207,6 +210,7 @@ void disp_end_game()
 	disp_char(5, i+7, 'V');
 	disp_char(5, i+14, 'E');
 	disp_char(5, i+21, 'R');
+
 }
 
 void draw_paddle()
