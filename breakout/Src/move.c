@@ -79,7 +79,7 @@ void move_ball()
 	x_pos = new_x;
 	y_pos = new_y;
 
-
+	//code to bounch off paddle
 	if(y_pos == 60 && hit_code > 0)
 	{
 		char col = x_pos - pot_avg -2;
@@ -102,12 +102,25 @@ void move_ball()
 	}
 
       
-if (hit_code > 0 && y_pos < 30) {
-    int x_index = ((x_pos-3) / 6); // Calculate which column of bricks the ball is in
-    int y_index = ((y_pos-10) / 4); // Calculate which row of bricks the ball is in
+	if (hit_code > 0 && y_pos < 30) {
+	    int x_index = ((x_pos-3) / 6); // Calculate which column of bricks the ball is in
+	    int y_index = ((y_pos-10) / 4); // Calculate which row of bricks the ball is in
 
-    if (bricks[x_index][y_index] == 1) { // Check if the brick is active
-        bricks[x_index][y_index] = 0; // Deactivate the brick
-        y_vel = -y_vel; // Reverse the velocity
-    }
+	    if (bricks[x_index][y_index] == 1) { // Check if the brick is active
+	        bricks[x_index][y_index] = 0; // Deactivate the brick
+	        y_vel = -y_vel; // Reverse the velocity
+			if(cur_player == 1)
+			{
+				score1++;
+			}
+			else
+			{
+				score2++;
+			}
+			if(y_index <= 3)
+			{
+				speed = 40;
+			}
+	    }
+	}
 }

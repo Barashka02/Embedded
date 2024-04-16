@@ -13,6 +13,14 @@ extern int paddle_size;
 extern char speed;
 extern int pot_value;
 extern char pot_avg;
+extern int score1;
+extern int score2;
+extern int high_score;
+
+//player setup
+extern char cur_player;
+extern char player_1_ball;
+extern char player_2_ball;
 
 //array for bricks
 extern xdata char bricks[13][5];

@@ -13,6 +13,14 @@ int paddle_size = 16;
 char speed = 80;
 //char speed = 100;
 char pot_avg = 0;
+int score1;
+int score2;
+int high_score;
+
+//player setup
+char cur_player = 1;
+char player_1_ball = 3;
+char player_2_ball = 3;
 
 //array for the bricks
 xdata char bricks[13][5] = {

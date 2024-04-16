@@ -99,7 +99,7 @@ void draw_borders()
 	}
 }
 
-void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
+void draw_scores()
 {	
 	//initialization
 	int i = 86; //starting point for "HIGHI"
@@ -141,12 +141,23 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 	disp_char(3, i+28, 'R');
 	disp_char(3, i+35, 'E');
 	disp_char(3, i+42, '-');
-
-	//calculating the score placements
-	thousands = cur_score / 1000;
-	hundreds = (cur_score / 100) % 10; 
-	tens = (cur_score / 10) % 10; 
-	ones = cur_score % 10;
+	
+	if(cur_player == 1)
+	{
+		//calculating the score placements
+		thousands = score1 / 1000;
+		hundreds = (score1 / 100) % 10; 
+		tens = (score1 / 10) % 10; 
+		ones = score1 % 10;
+	}
+	else 
+	{
+		//calculating the score placements
+		thousands = score2 / 1000;
+		hundreds = (score2 / 100) % 10; 
+		tens = (score2 / 10) % 10; 
+		ones = score2 % 10;
+	}
 	
 	//writing the high score
 	i = 93;
@@ -168,25 +179,54 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 
 	//drawing the leftover balls
 	i= 96;
-	if(player_ball == 3)
+	if(cur_player == 1)
 	{
-	//hit_no_care = draw_ball(int x, int y
-	draw_score_ball(i, 60);
-	draw_score_ball(i+11, 60);
-	draw_score_ball(i+22, 60);
+		if(player_1_ball == 3)
+		{
+		//hit_no_care = draw_ball(int x, int y
+		draw_score_ball(i, 60);
+		draw_score_ball(i+11, 60);
+		draw_score_ball(i+22, 60);
 	
-	}
+		}
 	
-	else if(player_ball == 2)
+		else if(player_1_ball == 2)
+		{
+		//hit_no_care = draw_ball(int x, int y
+		draw_score_ball(i, 60);
+		draw_score_ball(i+11, 60);
+		}
+
+		else if(player_1_ball == 1)
+		{
+		draw_score_ball(i, 60);
+		}
+
+			if(cur_player == 1)
 	{
-	//hit_no_care = draw_ball(int x, int y
-	draw_score_ball(i, 60);
-	draw_score_ball(i+11, 60);
+		if(player_2_ball == 3)
+		{
+		//hit_no_care = draw_ball(int x, int y
+		draw_score_ball(i, 60);
+		draw_score_ball(i+11, 60);
+		draw_score_ball(i+22, 60);
+	
+		}
+	
+		else if(player_2_ball == 2)
+		{
+		//hit_no_care = draw_ball(int x, int y
+		draw_score_ball(i, 60);
+		draw_score_ball(i+11, 60);
+		}
+
+		else if(player_2_ball == 1)
+		{
+		run = 0;
+		draw_score_ball(i, 60);
+		}
 	}
 
-	else if(player_ball == 1)
-	{
-	draw_score_ball(i, 60);
 	}
 
 
@@ -194,22 +234,98 @@ void draw_scores(int high_score, int cur_score, int cur_player, int player_ball)
 
 //Drawing the end game state
 
+void display_player_ready() {
+    int i = 20;
+    if (cur_player == 1) {
+        disp_char(3, i, 'P');
+        disp_char(3, i + 7, 'l');
+        disp_char(3, i + 14, 'a');
+        disp_char(3, i + 21, 'y');
+        disp_char(3, i + 28, 'e');
+        disp_char(3, i + 35, 'r');
+        disp_char(3, i + 42, ' ');
+        disp_char(3, i + 49, '1');
+        disp_char(3, i + 56, ' ');
+        disp_char(3, i + 63, 'R');
+        disp_char(3, i + 70, 'e');
+        disp_char(3, i + 77, 'a');
+        disp_char(3, i + 84, 'd');
+        disp_char(3, i + 91, 'y');
+		speed = 200;
+    } else {
+        disp_char(3, i, 'P');
+        disp_char(3, i + 7, 'l');
+        disp_char(3, i + 14, 'a');
+        disp_char(3, i + 21, 'y');
+        disp_char(3, i + 28, 'e');
+        disp_char(3, i + 35, 'r');
+        disp_char(3, i + 42, ' ');
+        disp_char(3, i + 49, '2');
+        disp_char(3, i + 56, ' ');
+        disp_char(3, i + 63, 'R');
+        disp_char(3, i + 70, 'e');
+        disp_char(3, i + 77, 'a');
+        disp_char(3, i + 84, 'd');
+        disp_char(3, i + 91, 'y');
+		speed = 200;
+    }
+}
 void disp_end_game()
 {
 	int i = 30;
 	
-	//TR2 = 0;
-	run = 0;
-	
-	disp_char(3, i, 'G');
-	disp_char(3, i+7, 'A');
-	disp_char(3, i+14, 'M');
-	disp_char(3, i+21, 'E');
+	if(cur_player == 1)
+	{	
+		if(player_1_ball != 0)
+		{
+			player_1_ball--;
+			run = 1;
+		}
+		else
+		{
+			run = 0;
+			disp_char(3, i, 'G');
+			disp_char(3, i+7, 'A');
+			disp_char(3, i+14, 'M');
+			disp_char(3, i+21, 'E');
 
-	disp_char(5, i, 'O');
-	disp_char(5, i+7, 'V');
-	disp_char(5, i+14, 'E');
-	disp_char(5, i+21, 'R');
+			disp_char(5, i, 'O');
+			disp_char(5, i+7, 'V');
+			disp_char(5, i+14, 'E');
+			disp_char(5, i+21, 'R');
+		}
+		cur_player = 2;
+	}
+	else
+	{
+		if(player_2_ball != 0)
+		{	
+			run = 1;
+			player_2_ball--;
+		}
+		else 
+		{
+			run = 0;
+			disp_char(3, i, 'G');
+			disp_char(3, i+7, 'A');
+			disp_char(3, i+14, 'M');
+			disp_char(3, i+21, 'E');
+
+			disp_char(5, i, 'O');
+			disp_char(5, i+7, 'V');
+			disp_char(5, i+14, 'E');
+			disp_char(5, i+21, 'R');
+		}
+		cur_player = 1;
+	}
+	
+		
+	//TR2 = 0;
+	blank_screen();
+	draw_borders();
+	draw_scores();
+	display_player_ready();
+	refresh_screen();
 
 }
 
