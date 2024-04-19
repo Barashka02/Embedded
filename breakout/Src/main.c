@@ -15,8 +15,14 @@ void adc_int() interrupt 15
 {
 	AD0INT = 0;
 	data_out = (ADC0H << 8) | ADC0L;
-
-	data_out = (data_out * ((88L - paddle_size)+1)) >> 12;
+	if(cur_player == 1)
+	{
+		data_out = (data_out * ((88L - paddle_size_1)+1)) >> 12;
+	}
+	else
+	{
+		data_out = (data_out * ((88L - paddle_size_2)+1)) >> 12;
+	}
 	//data_out = (((72 - paddle_size)+1)*data_out) >> 12;	// convert POT value to a temp value between 0-30
 	pot_value += data_out;		// Desired range is 0 to max width - paddle size
 	count++;
@@ -89,28 +95,38 @@ void main()
 
 	TR2 = 1;
 	
-	paddle_size = P1 & 0x03;
-	paddle_size = sizes[paddle_size];
+	paddle_size_1 = P1 & 0x03;
+	paddle_size_1  = sizes[paddle_size_1];
 
-	speed = (P1 & 0x0c) >> 2;
+	paddle_size_2 = (P1 & 0x0c) >> 2;
+	paddle_size_2  = sizes[paddle_size_2];
+
+	speed = (P1 & 0x30) >> 4;
 	speed = speeds[speed];
+
+	multi_player = P1 >> 7;
 
 	
 	init_lcd();
 	//draw_borders();
 	//draw_scores(1, 2, 1, 3);
 	//refresh_screen();
-	//display_player_ready();
-	//draw_borders();
-	//refresh_screen();
-	while(BUTTON == 1)
-	{}
-	run = 1;
+	
+
 	//---------------
 	while(1)
-	{	
-		//while(P2^6 == 0)
-		//{}
+	{
+		if(end_game != 1)
+		{
+			display_player_ready();
+			//disp_start_game();
+			refresh_screen();
+			while(BUTTON == 1)
+			{}
+			run = 1;
+			//while(P2^6 == 0)
+			//{}
+		}
 		while(run == 1)
 		{
 			blank_screen();
@@ -133,12 +149,14 @@ void main()
 
 			}
 			draw_scores();
-			
- 			while(move_on == 0)
-			{}
-			refresh_screen();
+			if(run == 1)
+			{
+	 			while(move_on == 0)
+				{}
+				refresh_screen();
 			}
 		}
+	}
 	
 	//------------------
 	//while(1)

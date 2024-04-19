@@ -11,7 +11,7 @@ char ball_cnt = 3;
 int player = 1;
 
 //setup constants
-int paddle_size = 16;
+
 char speed = 80;
 //char speed = 100;
 char pot_avg = 0;
@@ -23,6 +23,9 @@ int high_score;
 char cur_player = 1;
 char player_1_ball = 3;
 char player_2_ball = 3;
+int paddle_size_1;
+int paddle_size_2;
+
 
 //array for the bricks
 xdata char p1_bricks[13][5] = {
@@ -64,6 +67,8 @@ char move_on = 1;
 char run = 0;
 char count = 0;
 int pot_value = 0;
+char end_game = 0;
+char multi_player;
 
 
 
