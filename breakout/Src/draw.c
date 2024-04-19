@@ -46,6 +46,7 @@ void disp_char(unsigned char row, unsigned char column, char charachter)
 }
 void draw_bricks()
 {
+
     int i, j, k;
     for (i = 0; i < 13; i++)
     {
@@ -57,15 +58,29 @@ void draw_bricks()
             int mask = (j % 2 == 0) ? 0x07 : 0x70;   // decide the mask based on even/odd row
 
             for (k = 0; k < 5; k++)  // Draw each brick 5 pixels wide
-            {
-                if (bricks[i][j] == 0)
-                {
-                    screen[index + k] &= ~mask;  // clear bits using negated mask
-                }
-                else if (bricks[i][j] == 1)
-                {
-                    screen[index + k] |= mask;  // set bits using mask
-                }
+            {	
+				if(cur_player == 1)
+				{
+	                if (p1_bricks[i][j] == 0)
+	                {
+	                    screen[index + k] &= ~mask;  // clear bits using negated mask
+	                }
+	                else if (p1_bricks[i][j] == 1)
+	                {
+	                    screen[index + k] |= mask;  // set bits using mask
+	                }
+				}
+				else
+				{
+					if (p1_bricks[i][j] == 0)
+	                {
+	                    screen[index + k] &= ~mask;  // clear bits using negated mask
+	                }
+	                else if (p1_bricks[i][j] == 1)
+	                {
+	                    screen[index + k] |= mask;  // set bits using mask
+	                }
+				}
             }
         }
     }
@@ -245,12 +260,12 @@ void display_player_ready() {
         disp_char(3, i + 35, 'r');
         disp_char(3, i + 42, ' ');
         disp_char(3, i + 49, '1');
-        disp_char(3, i + 56, ' ');
-        disp_char(3, i + 63, 'R');
-        disp_char(3, i + 70, 'e');
-        disp_char(3, i + 77, 'a');
-        disp_char(3, i + 84, 'd');
-        disp_char(3, i + 91, 'y');
+     
+        disp_char(5, i + 7, 'R');
+        disp_char(5, i + 14, 'e');
+        disp_char(5, i + 21, 'a');
+        disp_char(5, i + 28, 'd');
+        disp_char(5, i + 35, 'y');
 		speed = 200;
     } else {
         disp_char(3, i, 'P');
@@ -261,19 +276,41 @@ void display_player_ready() {
         disp_char(3, i + 35, 'r');
         disp_char(3, i + 42, ' ');
         disp_char(3, i + 49, '2');
-        disp_char(3, i + 56, ' ');
-        disp_char(3, i + 63, 'R');
-        disp_char(3, i + 70, 'e');
-        disp_char(3, i + 77, 'a');
-        disp_char(3, i + 84, 'd');
-        disp_char(3, i + 91, 'y');
-		speed = 200;
+
+        disp_char(5, i + 7, 'R');
+        disp_char(5, i + 14, 'e');
+        disp_char(5, i + 21, 'a');
+        disp_char(5, i + 28, 'd');
+        disp_char(5, i + 35, 'y');
     }
+}
+
+void disp_start_game()
+{
+	int i = 25;
+	disp_char(3, i, 'P');
+    disp_char(3, i + 7, 'r');
+    disp_char(3, i + 14, 'e');
+    disp_char(3, i + 21, 's');
+    disp_char(3, i + 28, 's');
+
+    disp_char(4, i + 7, 't');
+    disp_char(4, i + 14, 'o');
+
+
+    disp_char(5, i + 0, 'S');
+    disp_char(5, i + 7, 't');
+    disp_char(5, i + 14, 'a');
+    disp_char(5, i + 21, 'r');
+    disp_char(5, i + 28, 't');
+
+
 }
 void disp_end_game()
 {
 	int i = 30;
-	
+	run = 0;
+/*	
 	if(cur_player == 1)
 	{	
 		if(player_1_ball != 0)
@@ -319,13 +356,15 @@ void disp_end_game()
 		cur_player = 1;
 	}
 	
-		
+*/		
 	//TR2 = 0;
-	blank_screen();
-	draw_borders();
-	draw_scores();
-	display_player_ready();
+	//blank_screen();
+	//draw_borders();
+	//draw_scores();
+	//display_player_ready();
 	refresh_screen();
+	x_pos = 40;
+	y_pos = 40;
 
 }
 

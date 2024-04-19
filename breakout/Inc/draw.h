@@ -5,3 +5,4 @@ void draw_scores();
 void disp_end_game();
 void draw_paddle();
 void draw_bricks();
+void disp_start_game();

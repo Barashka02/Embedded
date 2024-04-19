@@ -1,3 +1,5 @@
+
+
 //position constants
 extern int x_vel;
 extern int y_vel;
@@ -23,7 +25,9 @@ extern char player_1_ball;
 extern char player_2_ball;
 
 //array for bricks
-extern xdata char bricks[13][5];
+extern xdata char p1_bricks[13][5];
+extern xdata char p2_bricks[13][5];
+
 extern int hit_location;
 
 //miscelanout neede for computations
@@ -31,5 +35,7 @@ extern long data_out;
 extern char move_on;
 extern char run;
 extern char count;
+
+
 
 

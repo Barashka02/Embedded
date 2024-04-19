@@ -12,7 +12,22 @@
 //------------------------------------------------------------------
 //SETTING UP BALL 
 //------------------------------------------------------------------
+char get_collision_type(int ball_x, int ball_y, int brick_x, int brick_y) {
+    // Approximate the ball as a point at its center for simplicity
+    int ball_center_x = ball_x + 2; // middle of ball assuming width 5
+    int ball_center_y = ball_y + 2; // middle of ball assuming height 5
 
+    // Calculate relative positions
+    int relative_x = ball_center_x - (brick_x + 5 / 2);
+    int relative_y = ball_center_y - (brick_y + 3 / 2);
+
+    // Determine the type of collision based on the relative positions
+    if (abs(relative_x) > abs(relative_y)) {
+        return (relative_x > 0) ? 'L' : 'R'; // Left or Right side hit
+    } else {
+        return (relative_y > 0) ? 'T' : 'B'; // Top or Bottom hit
+    }
+}
 code unsigned char ball[] = {0x0e, 0x1f, 0x1f, 0x1f, 0x0e};
 char draw_ball(int x, int y)
 {	
@@ -22,15 +37,22 @@ char draw_ball(int x, int y)
 	//checking for hits
 	//if(x <= 4 || x >= 76 || y <= 2 || y >= 59) return 1;
 
-	if(x <= 4 || x >= 78) // The ball has hit the right or left wall
+	if(x < 4 && x_vel < 0) // The ball has hit the right or left wall
 	{
 		x_vel = -x_vel;
+		return 0;
 	}
-	else if(y <= 4) 	//The ball has hit the top wall
+	else if(x > 78 && x_vel > 0) 
+	{
+		x_vel = -x_vel;
+		return 0;
+	}
+	else if(y < 5 && y_vel < 0) 	//The ball has hit the top wall
 	{
 		y_vel = -y_vel;
+		return 0;
 	}
-	else if(y >= 61) //The ball has gone off the botton 
+	else if(y > 62) //The ball has gone off the botton 
 	{
 		disp_end_game();
 	}
@@ -101,14 +123,49 @@ void move_ball()
 		}
 	}
 
-      
-	if (hit_code > 0 && y_pos < 30) {
+    if (hit_code && y_pos < 30) { // Bricks are assumed to be within y < 30
+        int x_index = (x_pos - 3) / 6; // Calculate which column of bricks
+        int y_index = (y_pos - 10) / 4; // Calculate which row of bricks
+		
+		if(cur_player == 1)
+		{
+	        if (p1_bricks[x_index][y_index] == 1) { // Check if the brick is active
+	            char collision_type = get_collision_type(x_pos, y_pos, x_index * 6 + 3, y_index * 4 + 10);
+	            if (collision_type == 'L' || collision_type == 'R') 
+				{
+	                x_vel = -x_vel; // Reverse horizontal velocity for side hits
+	            } 
+				else 
+				{
+	                y_vel = -y_vel; // Reverse vertical velocity for top/bottom hits
+	            }
+	            p1_bricks[x_index][y_index] = 0; // Deactivate the brick
+	        }
+		else{
+			 if (p2_bricks[x_index][y_index] == 1) { // Check if the brick is active
+		            char collision_type = get_collision_type(x_pos, y_pos, x_index * 6 + 3, y_index * 4 + 10);
+		            if (collision_type == 'L' || collision_type == 'R')
+					{
+		                x_vel = -x_vel; // Reverse horizontal velocity for side hits
+		            }
+					else 
+					{
+		                y_vel = -y_vel; // Reverse vertical velocity for top/bottom hits
+		            }
+		            p2_bricks[x_index][y_index] = 0; // Deactivate the brick
+		        }
+			}
+		}		
+   } 
+/**      
+	else if (hit_code > 0 && y_pos < 30 && y_pos > 4) {
 	    int x_index = ((x_pos-3) / 6); // Calculate which column of bricks the ball is in
 	    int y_index = ((y_pos-10) / 4); // Calculate which row of bricks the ball is in
 
 	    if (bricks[x_index][y_index] == 1) { // Check if the brick is active
 	        bricks[x_index][y_index] = 0; // Deactivate the brick
 	        y_vel = -y_vel; // Reverse the velocity
+			//x_vel = -x_vel;
 			if(cur_player == 1)
 			{
 				score1++;
@@ -117,10 +174,10 @@ void move_ball()
 			{
 				score2++;
 			}
-			if(y_index <= 3)
+			if(y_index <= 2)
 			{
 				speed = 40;
 			}
 	    }
-	}
+	}**/
 }

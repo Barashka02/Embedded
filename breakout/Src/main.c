@@ -3,11 +3,13 @@
 #include "../Inc/draw.h"
 #include "../Inc/move.h"
 #include "../Inc/global.h"
-
+//#define BUTTON (P2 & (1 << 6))
+//#define BUTTON (P2^6)
 //------------------------------------------------------
 //GLOBAL VARIABLES
 //------------------------------------------------------
 
+sbit BUTTON = P2^6;
 
 void adc_int() interrupt 15
 {
@@ -54,6 +56,7 @@ void timer2(void) interrupt 5{
 void main()
 {
 	char sizes[4] = {8, 12, 16, 24};
+	char speeds[4] = {50, 70, 90, 110};
    WDTCN = 0xde;  // disable watchdog
    WDTCN = 0xad;
    XBR2 = 0x40;   // enable port output
@@ -86,21 +89,30 @@ void main()
 
 	TR2 = 1;
 	
-	
 	paddle_size = P1 & 0x03;
 	paddle_size = sizes[paddle_size];
+
+	speed = (P1 & 0x0c) >> 2;
+	speed = speeds[speed];
+
 	
 	init_lcd();
 	//draw_borders();
 	//draw_scores(1, 2, 1, 3);
 	//refresh_screen();
-
+	//display_player_ready();
+	//draw_borders();
+	//refresh_screen();
+	while(BUTTON == 1)
+	{}
+	run = 1;
 	//---------------
 	while(1)
 	{	
 		//while(P2^6 == 0)
 		//{}
-		if(run == 1){
+		while(run == 1)
+		{
 			blank_screen();
 			draw_borders();
 			draw_paddle();
@@ -125,9 +137,9 @@ void main()
  			while(move_on == 0)
 			{}
 			refresh_screen();
-
+			}
 		}
-	}
+	
 	//------------------
 	//while(1)
 	//{
