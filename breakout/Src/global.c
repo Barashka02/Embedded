@@ -60,6 +60,9 @@ xdata char p2_bricks[13][5] = {
 	{1, 1, 1, 1, 1}
 };
 
+
+
+
 int hit_location;
 //miscelanout neede for computations
 long data_out = 0;
@@ -69,7 +72,8 @@ char count = 0;
 int pot_value = 0;
 char end_game = 0;
 char multi_player;
-
+int zero_cnt = 0;
+unsigned int duration = 0;
 
 
 

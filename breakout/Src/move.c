@@ -33,7 +33,7 @@ char get_collision_type(int ball_x, int ball_y, int brick_x, int brick_y) {
     }
 }
 **/
-
+/**
 void adjust_ball_velocity(int brick_x, int brick_y, int brick_width, int brick_height) {
     int ball_center_x = x_pos + 2; // Assuming the ball's width is about 5 pixels, adjust accordingly
     int ball_center_y = y_pos + 2; // Assuming the ball's height is about 5 pixels
@@ -68,7 +68,7 @@ void process_collision(int x_index, int y_index, char bricks[][5], int* score) {
         }
     }
 }
-
+**/
 code unsigned char ball[] = {0x0e, 0x1f, 0x1f, 0x1f, 0x0e};
 char draw_ball(int x, int y)
 {	
@@ -81,6 +81,11 @@ char draw_ball(int x, int y)
 	if(x < 4 && x_vel < 0) // The ball has hit the right or left wall
 	{
 		x_vel = -x_vel;
+
+		RCAP4H = -1164 >> 8;
+		RCAP4L = -1164;
+		duration = 831;
+		T4CON = T4CON & 0x04;
 		return 0;
 	}
 	else if(x > 78 && x_vel > 0) 
@@ -137,7 +142,7 @@ void move_ball()
 	 
 	if(cur_player == 1)
 	{
-		if(score1 == 65 && y_pos > 35)
+		if(score1 % 65 == 0 && y_pos > 30)
 		{
 				for (j = 0; j < 13; j++) {
 	        		for (k = 0; k < 5; k++) {
@@ -148,7 +153,7 @@ void move_ball()
 	}	
 	else
 	{
-		if(score2 == 65 && y_pos > 35)
+		if(score2 % 65 == 0 && y_pos > 30)
 		{
 			for (j = 0; j < 13; j++) {
         		for (k = 0; k < 5; k++) {
@@ -235,15 +240,23 @@ void move_ball()
 			}
 		}		
    } 
-   **/
-   /**  Best one so far!!!!!
+ 
+**/
 	else if (hit_code > 0 && y_pos < 30 && y_pos > 4) {
-	    int x_index = ((x_pos-3) / 6); // Calculate which column of bricks the ball is in
+//	    int x_index = ((x_pos-3) / 6); // Calculate which column of bricks the ball is in
+//	    int y_index = ((y_pos-10) / 4); // Calculate which row of bricks the ball is in
+
+
+	    int x_index = ((x_pos-4) / 6); // Calculate which column of bricks the ball is in
 	    int y_index = ((y_pos-10) / 4); // Calculate which row of bricks the ball is in
+		
 		if(cur_player == 1)
 		{
 		    if (p1_bricks[x_index][y_index] == 1) { // Check if the brick is active
 		        p1_bricks[x_index][y_index] = 0; // Deactivate the brick
+
+				
+					  // Reset each brick to 1
 		        y_vel = -y_vel; // Reverse the velocity
 				//x_vel = -x_vel;
 				score1++;
@@ -257,6 +270,8 @@ void move_ball()
 		{
 		    if (p2_bricks[x_index][y_index] == 1) { // Check if the brick is active
 		        p2_bricks[x_index][y_index] = 0; // Deactivate the brick
+				
+			
 		        y_vel = -y_vel; // Reverse the velocity
 				//x_vel = -x_vel;
 				score2++;
@@ -268,7 +283,7 @@ void move_ball()
 		}
 	}
 }
-**/
+/**
 
 	if (hit_code > 0 && y_pos < 30 && y_pos > 4) {
 	    int x_index = ((x_pos-3) / 6);
@@ -280,4 +295,4 @@ void move_ball()
 	    }
 	}
 }
-
+**/

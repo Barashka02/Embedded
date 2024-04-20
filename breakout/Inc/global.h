@@ -29,6 +29,7 @@ extern int paddle_size_2;
 extern xdata char p1_bricks[13][5];
 extern xdata char p2_bricks[13][5];
 
+
 extern int hit_location;
 
 //miscelanout neede for computations
@@ -38,7 +39,8 @@ extern char run;
 extern char count;
 extern char end_game;
 extern char multi_player;
-
+extern int zero_cnt;
+extern unsigned int duration;
 
 
 

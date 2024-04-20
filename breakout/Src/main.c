@@ -11,6 +11,39 @@
 
 sbit BUTTON = P2^6;
 
+code unsigned char sine[16] = { 176, 217, 244, 254, 244, 217, 176, 128, 80, 39, 12, 2, 12, 39, 80, 128 };
+unsigned char phase = sizeof(sine)-1;  // Current point in sine to output
+              // Number of cycles left to output
+
+// New variables for amplitude scaling
+unsigned int maxDuration = 800; // Initial max duration for scaling
+unsigned char maxAmplitude = 255; // Maximum amplitude. Adjust according to your needs
+int scaledAmplitude = 0;
+
+void sound() interrupt 16
+{
+	T4CON = T4CON & 0x80;  // clearing the interupt flag
+	
+
+
+    // Scale the sine value based on remaining duration
+    scaledAmplitude = (unsigned char)(((long)sine[phase]-128) * duration / maxDuration);
+    
+    // Ensure the scaled amplitude does not exceed the DAC range
+    if (scaledAmplitude > maxAmplitude) {
+        scaledAmplitude = maxAmplitude;
+    }
+    
+    DAC0H = scaledAmplitude+128;
+    
+    if (phase < sizeof(sine)-1) {
+        phase++;
+    } else if (duration > 0) {
+        phase = 0;
+        duration--;
+    }
+}
+
 void adc_int() interrupt 15
 {
 	AD0INT = 0;
@@ -77,7 +110,7 @@ void main()
    //SCON0 = 0x50;  // 8-bit, variable baud, receive enable
    //TH1 = -6;      // 9600 baud
    	IE = 0xA0;
-	EIE2 = 0x02;
+	EIE2 = 0x06;
 	//setting up timer 2 (16 bit 10 milisecond auto reload);
 	T2CON = 0X00;
 
@@ -90,10 +123,15 @@ void main()
 	ADC0CF = 0x40; //setting values to read from the pot
 	AMX0SL = 0x0;
 	
+	//setting up the DAC
+	DAC0CN = 0x9c;
+	RCAP4H = -1;
+	RCAP4L = -144;
 	// Enable flash writes, set necessary flags
     PSCTL = 0x01; // PSWE = 1, PSEE = 0
 
 	TR2 = 1;
+	T4CON = T4CON & 0x04;
 	
 	paddle_size_1 = P1 & 0x03;
 	paddle_size_1  = sizes[paddle_size_1];
