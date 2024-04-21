@@ -385,7 +385,7 @@ void display_player_ready() {
 void disp_end_game()
 {
 	int i = 30;
-	int j, k;
+//	int j, k;
 	run = 0;
 
 	if(cur_player == 1 && multi_player == 0)
@@ -393,17 +393,24 @@ void disp_end_game()
 		if(player_1_ball != 0)
 		{
 			player_1_ball--;
+
 			//run = 1;
 		}
 		else
 		{
-		player_1_ball = 3;
-		score1 = 0;
-			for (j = 0; j < 13; j++) {
-	        	for (k = 0; k < 5; k++) {
-	            	p1_bricks[j][k] = 1;  // Reset each brick to 1
-	        	}
-	    	}
+			blank_screen();
+			draw_borders();
+			disp_char(2, i, 'G');
+			disp_char(2, i+7, 'A');
+			disp_char(2, i+14, 'M');
+			disp_char(2, i+21, 'E');
+
+			disp_char(3, i, 'O');
+			disp_char(3, i+7, 'V');
+			disp_char(3, i+14, 'E');
+			disp_char(3, i+21, 'R');
+
+			end_game = 1;
    		}
 	}
 
@@ -429,14 +436,6 @@ void disp_end_game()
 			disp_char(3, i+14, 'E');
 			disp_char(3, i+21, 'R');
 
-			disp_char(5, i+7, 'P');
-			disp_char(5, i+14, '2');
-
-
-			disp_char(6, i, 'W');
-			disp_char(6, i+7, 'O');
-			disp_char(6, i+14, 'N');
-			disp_char(6, i+22, '!');
 			end_game = 1;
 
 		}
@@ -465,14 +464,7 @@ void disp_end_game()
 			disp_char(3, i+14, 'E');
 			disp_char(3, i+21, 'R');
 
-			disp_char(5, i+7, 'P');
-			disp_char(5, i+14, '1');
 
-
-			disp_char(6, i, 'W');
-			disp_char(6, i+7, 'O');
-			disp_char(6, i+14, 'N');
-			disp_char(6, i+22, '!');
 			end_game = 1;			
 		}
 	}

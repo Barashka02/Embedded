@@ -4,71 +4,27 @@
 #include "../Inc/global.h"
 #include <math.h>
 #include <stdbool.h>
-//------------------------------------------------------------------
-//Helper Functions
-//------------------------------------------------------------------
-// Function returns the index of the brick that was hit, or -1 if no collision occurred.
+
+#define BRICK_ROWS 11
+#define BRICK_COLS 5
+#define BRICK_WIDTH 7
+#define BRICK_HEIGHT 4
+#define TOP_OFFSET 10 // Assuming bricks start 10 pixels from the top
+#define LEFT_OFFSET 3 // Assuming bricks start 3 pixels from the left side
+#define BRICK_ROWS 11
+#define BRICK_COLS 5
+#define BRICK_WIDTH 7
+#define BRICK_HEIGHT 4
+#define TOP_OFFSET 10 // Assuming bricks start 10 pixels from the top
+#define LEFT_OFFSET 3 // Assuming bricks start 3 pixels from the left side
+
+
 
 //------------------------------------------------------------------
 //SETTING UP BALL 
 //------------------------------------------------------------------
-/**
-char get_collision_type(int ball_x, int ball_y, int brick_x, int brick_y) {
-    // Approximate the ball as a point at its center for simplicity
-//    int ball_center_x = ball_x + 2; // middle of ball assuming width 5
-//    int ball_center_y = ball_y + 2; // middle of ball assuming height 5
 
-    int ball_center_x = ball_x; // middle of ball assuming width 5
-    int ball_center_y = ball_y; // middle of ball assuming height 5
 
-    // Calculate relative positions
-    int relative_x = ball_center_x - (brick_x + 5 / 2);
-    int relative_y = ball_center_y - (brick_y + 3 / 2);
-
-    // Determine the type of collision based on the relative positions
-    if (abs(relative_x) > abs(relative_y)) {
-        return (relative_x > 0) ? 'L' : 'R'; // Left or Right side hit
-    } else {
-        return (relative_y > 0) ? 'T' : 'B'; // Top or Bottom hit
-    }
-}
-**/
-/**
-void adjust_ball_velocity(int brick_x, int brick_y, int brick_width, int brick_height) {
-    int ball_center_x = x_pos + 2; // Assuming the ball's width is about 5 pixels, adjust accordingly
-    int ball_center_y = y_pos + 2; // Assuming the ball's height is about 5 pixels
-
-    // Determine the center of the brick
-    int brick_center_x = brick_x + brick_width / 2;
-    int brick_center_y = brick_y + brick_height / 2;
-
-    // Calculate differences
-    int dx = ball_center_x - brick_center_x;
-    int dy = ball_center_y - brick_center_y;
-
-    if (abs(dy) >= abs(dx)) {
-        y_vel = -y_vel; // Top or bottom hit
-    } else {
-        x_vel = -x_vel; // Side hit
-    }
-}
-
-void process_collision(int x_index, int y_index, char bricks[][5], int* score) {
-    int brick_width = 6;
-    int brick_height = 4;
-    int brick_x = x_index * brick_width + 3; // Adjust +3 if your coordinate system requires
-    int brick_y = y_index * brick_height + 10; // Adjust +10 similarly
-
-    if (bricks[x_index][y_index] == 1) { // Check if the brick is active
-        bricks[x_index][y_index] = 0; // Deactivate the brick
-        adjust_ball_velocity(brick_x, brick_y, brick_width, brick_height);
-        (*score)++;
-        if (y_index <= 2) {
-            speed = 40; // Increase game speed
-        }
-    }
-}
-**/
 code unsigned char ball[] = {0x0e, 0x1f, 0x1f, 0x1f, 0x0e};
 char draw_ball(int x, int y)
 {	
@@ -82,24 +38,42 @@ char draw_ball(int x, int y)
 	{
 		x_vel = -x_vel;
 
-		RCAP4H = -1164 >> 8;
-		RCAP4L = -1164;
-		duration = 831;
-		T4CON = T4CON & 0x04;
+		RCAP4H = -2354 >> 8;
+		RCAP4L = -2354;
+		duration = 40;
+		T4CON = T4CON^0x04;
 		return 0;
 	}
 	else if(x > 78 && x_vel > 0) 
 	{
 		x_vel = -x_vel;
+
+		RCAP4H = -2354 >> 8;
+		RCAP4L = -2354;
+		duration = 40;
+		T4CON = T4CON^0x04;
 		return 0;
 	}
 	else if(y < 5 && y_vel < 0) 	//The ball has hit the top wall
 	{
 		y_vel = -y_vel;
+
+		RCAP4H = -2354 >> 8;
+		RCAP4L = -2354;
+		duration = 40;
+		T4CON = T4CON^0x04;
 		return 0;
 	}
 	else if(y > 62) //The ball has gone off the botton 
-	{
+	{ 
+	//	if(duration == 0)
+	//	{
+	//		while(duration){};
+	
+		RCAP4H = -1868>> 8;
+		RCAP4L = -1868;
+		duration = 300;
+		T4CON = T4CON^0x04;
 		disp_end_game();
 		return 0;
 	}
@@ -139,7 +113,7 @@ void move_ball()
     int brick_width = 6;
     int brick_height = 3;
 	int j, k;
-	 
+
 	if(cur_player == 1)
 	{
 		if(score1 % 65 == 0 && y_pos > 30)
@@ -179,8 +153,15 @@ void move_ball()
 	//code to bounch off paddle
 	if(y_pos == 60 && hit_code > 0)
 	{
+
 		char col = x_pos - pot_avg -2;
 		int div; 
+
+		RCAP4H = -3142 >> 8;
+		RCAP4L = -3142;
+		duration = 25;
+		T4CON = T4CON^0x04;
+
 		if(cur_player == 1)
 		{
 			div = paddle_size_1 / 4;
@@ -223,6 +204,7 @@ void move_ball()
 	                y_vel = -y_vel; // Reverse vertical velocity for top/bottom hits
 	            }
 	            p1_bricks[x_index][y_index] = 0; // Deactivate the brick
+				score1++;
 	        }
 		else{
 			 if (p2_bricks[x_index][y_index] == 1) { // Check if the brick is active
@@ -230,24 +212,22 @@ void move_ball()
 		            if (collision_type == 'L' || collision_type == 'R')
 					{
 		                x_vel = -x_vel; // Reverse horizontal velocity for side hits
+
 		            }
 					else 
 					{
 		                y_vel = -y_vel; // Reverse vertical velocity for top/bottom hits
 		            }
 		            p2_bricks[x_index][y_index] = 0; // Deactivate the brick
+					score2++;
 		        }
 			}
 		}		
    } 
- 
 **/
 	else if (hit_code > 0 && y_pos < 30 && y_pos > 4) {
-//	    int x_index = ((x_pos-3) / 6); // Calculate which column of bricks the ball is in
-//	    int y_index = ((y_pos-10) / 4); // Calculate which row of bricks the ball is in
 
-
-	    int x_index = ((x_pos-4) / 6); // Calculate which column of bricks the ball is in
+	    int x_index = ((x_pos-3) / 6); // Calculate which column of bricks the ball is in
 	    int y_index = ((y_pos-10) / 4); // Calculate which row of bricks the ball is in
 		
 		if(cur_player == 1)
@@ -255,7 +235,10 @@ void move_ball()
 		    if (p1_bricks[x_index][y_index] == 1) { // Check if the brick is active
 		        p1_bricks[x_index][y_index] = 0; // Deactivate the brick
 
-				
+					RCAP4H = -1571>> 8;
+					RCAP4L = -1571;
+					duration = 50;
+					T4CON = T4CON^0x04;
 					  // Reset each brick to 1
 		        y_vel = -y_vel; // Reverse the velocity
 				//x_vel = -x_vel;
@@ -272,6 +255,10 @@ void move_ball()
 		        p2_bricks[x_index][y_index] = 0; // Deactivate the brick
 				
 			
+				RCAP4H = -1571>> 8;
+				RCAP4L = -1571;
+				duration = 50;
+				T4CON = T4CON^0x04;
 		        y_vel = -y_vel; // Reverse the velocity
 				//x_vel = -x_vel;
 				score2++;
@@ -283,16 +270,3 @@ void move_ball()
 		}
 	}
 }
-/**
-
-	if (hit_code > 0 && y_pos < 30 && y_pos > 4) {
-	    int x_index = ((x_pos-3) / 6);
-	    int y_index = ((y_pos-10) / 4);
-	    if(cur_player == 1) {
-	        process_collision(x_index, y_index, p1_bricks, &score1);
-	    } else {
-	        process_collision(x_index, y_index, p2_bricks, &score2);
-	    }
-	}
-}
-**/

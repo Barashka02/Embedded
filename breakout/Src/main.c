@@ -3,8 +3,7 @@
 #include "../Inc/draw.h"
 #include "../Inc/move.h"
 #include "../Inc/global.h"
-//#define BUTTON (P2 & (1 << 6))
-//#define BUTTON (P2^6)
+
 //------------------------------------------------------
 //GLOBAL VARIABLES
 //------------------------------------------------------
@@ -13,35 +12,23 @@ sbit BUTTON = P2^6;
 
 code unsigned char sine[16] = { 176, 217, 244, 254, 244, 217, 176, 128, 80, 39, 12, 2, 12, 39, 80, 128 };
 unsigned char phase = sizeof(sine)-1;  // Current point in sine to output
-              // Number of cycles left to output
-
-// New variables for amplitude scaling
-unsigned int maxDuration = 800; // Initial max duration for scaling
-unsigned char maxAmplitude = 255; // Maximum amplitude. Adjust according to your needs
-int scaledAmplitude = 0;
+            
 
 void sound() interrupt 16
 {
-	T4CON = T4CON & 0x80;  // clearing the interupt flag
-	
+	T4CON = T4CON^0x80;  // clearing the interupt flag
+	DAC0H = sine[phase];
 
-
-    // Scale the sine value based on remaining duration
-    scaledAmplitude = (unsigned char)(((long)sine[phase]-128) * duration / maxDuration);
-    
-    // Ensure the scaled amplitude does not exceed the DAC range
-    if (scaledAmplitude > maxAmplitude) {
-        scaledAmplitude = maxAmplitude;
-    }
-    
-    DAC0H = scaledAmplitude+128;
-    
     if (phase < sizeof(sine)-1) {
         phase++;
     } else if (duration > 0) {
         phase = 0;
         duration--;
     }
+	if(duration == 0)
+	{
+		T4CON = 0x00;
+	}
 }
 
 void adc_int() interrupt 15
@@ -56,7 +43,6 @@ void adc_int() interrupt 15
 	{
 		data_out = (data_out * ((88L - paddle_size_2)+1)) >> 12;
 	}
-	//data_out = (((72 - paddle_size)+1)*data_out) >> 12;	// convert POT value to a temp value between 0-30
 	pot_value += data_out;		// Desired range is 0 to max width - paddle size
 	count++;
 
@@ -76,18 +62,6 @@ void timer2(void) interrupt 5{
 	else {
     	move_on = 0; // Prevents the game loop from advancing too quickly
 	}
-
-
-//	count = 0;
-//	blank_screen();
-//	draw_paddle(pot_avg, paddle_size);
-	
-//	move_ball();
-	
-	//draw_paddle(0, 20);
-	//draw_borders();
-	//draw_scores(1, 2, 1, 3);
-	//refresh_screen();
 }
 
 
@@ -96,20 +70,18 @@ void main()
 {
 	char sizes[4] = {8, 12, 16, 24};
 	char speeds[4] = {50, 70, 90, 110};
-   WDTCN = 0xde;  // disable watchdog
-   WDTCN = 0xad;
-   XBR2 = 0x40;   // enable port output
-   //XBR0 = 4;      // enable uart 0
-   OSCXCN = 0x67; // turn on external crystal
-   TMOD = 0x20;   // wait 1ms using T1 mode 2
-   TH1 = -167;    // 2MHz clock, 167 counts - 1ms
-   TR1 = 1;
-   while ( TF1 == 0 ) { }          // wait 1ms
-   while ( !(OSCXCN & 0x80) ) { }  // wait till oscillator stable
-   OSCICN = 8;    // switch over to 22.1184MHz
-   //SCON0 = 0x50;  // 8-bit, variable baud, receive enable
-   //TH1 = -6;      // 9600 baud
-   	IE = 0xA0;
+	WDTCN = 0xde;  // disable watchdog
+	WDTCN = 0xad;
+	XBR2 = 0x40;   // enable port output
+
+	OSCXCN = 0x67; // turn on external crystal
+	TMOD = 0x20;   // wait 1ms using T1 mode 2
+	TH1 = -167;    // 2MHz clock, 167 counts - 1ms
+	TR1 = 1;
+	while ( TF1 == 0 ) { }          // wait 1ms
+	while ( !(OSCXCN & 0x80) ) { }  // wait till oscillator stable
+	OSCICN = 8;    // switch over to 22.1184MHz
+	IE = 0xA0;
 	EIE2 = 0x06;
 	//setting up timer 2 (16 bit 10 milisecond auto reload);
 	T2CON = 0X00;
@@ -122,17 +94,18 @@ void main()
 	REF0CN = 0x07;
 	ADC0CF = 0x40; //setting values to read from the pot
 	AMX0SL = 0x0;
-	
+
 	//setting up the DAC
 	DAC0CN = 0x9c;
 	RCAP4H = -1;
 	RCAP4L = -144;
 	// Enable flash writes, set necessary flags
-    PSCTL = 0x01; // PSWE = 1, PSEE = 0
+	PSCTL = 0x01; // PSWE = 1, PSEE = 0
 
 	TR2 = 1;
 	T4CON = T4CON & 0x04;
-	
+	CKCON = 0x40;
+
 	paddle_size_1 = P1 & 0x03;
 	paddle_size_1  = sizes[paddle_size_1];
 
@@ -144,7 +117,7 @@ void main()
 
 	multi_player = P1 >> 7;
 
-	
+
 	init_lcd();
 	//draw_borders();
 	//draw_scores(1, 2, 1, 3);
@@ -194,195 +167,7 @@ void main()
 				refresh_screen();
 			}
 		}
-	}
-	
-	//------------------
-	//while(1)
-	//{
-	
-	//}
+	}	
 }
 
 
-
-/*
-//display character function
-void disp_char(unsigned char row, unsigned char column, char charachter)
-{
-	int i, j;
-	unsigned char k;
-	i = 128 * row + column;
-	j = (charachter - 0x20)*5;
-	for(k = 0; k < 5; ++k)
-		{
-		screen[i + k] |= font5x8[j+k];
-		}
-}
-
-long data_out = 0;
-long far_val = 0;
-void adc_int() interrupt 15
-{
-	AD0INT = 0;
-	data_out = (ADC0H << 8) | ADC0L;
-	averaged = 0;
-	
-
-	if(index < 256) // checking if the value needs to be from the temp sensor.
-	{
-		far_val = ((data_out - 2475) * 12084L) >> 16;
-		temp_value += far_val;
-		
-		if(index == 255)
-		{
-			ADC0CF = 0x40; //setting values to read from the pot
-			AMX0SL = 0x0;
-		}
-		index++;
-	}
-	else if(index < 512)  // checking if the value needs to be from the pot.
-	{
-		data_out = (31*data_out) >> 12;	// convert POT value to a temp value between 0-30
-		pot_value += 55 + data_out;		// Desired range is 55-85, hence the 55 value
-		if(index == 511)
-		{
-			ADC0CF = 0x41; //setting values to read from the temp
-			AMX0SL = 0x08;
-		}
-		index++;
-	}
-		if(index == 512)
-		{
-			//take the average.
-			temp_avg = temp_value >> 8;
-			pot_avg = pot_value >> 8;
-			averaged = 1;
-			
-			//clear all values
-			temp_value = 0;
-			pot_value = 0;
-
-			index = 0;
-		}
-		
-		}
-void t2_int() interrupt 5
-{
-   TF2 = 0;
-
-
-   //checking if we need to read the temp sensor
-   if(index < 256) 
-   {
-   		
-		toggle = 0;
-   }
-   //checking if we need to read the pot sensor
-   else if(index < 512)
-   {
-	
-   }
-   else
-   {
-		index = 0;
-		ADC0CF = 0x41; //setting values to read from the temp
-		AMX0SL = 0x08;
-   }
-}
-
-void main()
-{
-   WDTCN = 0xde;  // disable watchdog
-   WDTCN = 0xad;
-   XBR2 = 0x40;   // enable port output
-   XBR0 = 4;      // enable uart 0
-   OSCXCN = 0x67; // turn on external crystal
-   TMOD = 0x20;   // wait 1ms using T1 mode 2
-   TH1 = -167;    // 2MHz clock, 167 counts - 1ms
-   TR1 = 1;
-   while ( TF1 == 0 ) { }          // wait 1ms
-   while ( !(OSCXCN & 0x80) ) { }  // wait till oscillator stable
-   OSCICN = 8;    // switch over to 22.1184MHz
-   SCON0 = 0x50;  // 8-bit, variable baud, receive enable
-   TH1 = -6;      // 9600 baud
-   //interupt setup
-
-   IE = 0x80;
-   EIE2 = 0x02;
-   
-   // setting up the ADC
-   ADC0CN = 0x8C;
-   REF0CN = 0x07;
-   ADC0CF = 0x41; //setting values to read from the temp (possibly 0)
-   AMX0SL = 0x08;
-   AMX0CF = 0x00;
-
-   // setting up timer 2
-   T2CON = 0x00;
-
-   //RCAP2H = 0xF9;  // This overflows 512 times in 400 milisecond. 
-   //RCAP2L = 0x40;
-
-   RCAP2H = -843 >> 8;  // This overflows 512 times in 400 milisecond. 
-   RCAP2L = -843;
-
-   //RCAP2H = 0xF9;
-   //RCAP2L = 0x40;
-
-   TR2 = 1;
-init_lcd();
-while(1)
-{
-	if(averaged == 1)
-	{
-		blank_screen();
-
-		tens = (pot_avg / 10) % 10;
-		ones = (pot_avg  % 10);
-
-		temp_tens = (temp_avg / 10) % 10;
-		temp_ones = (temp_avg % 10);
-		
-	
-		disp_char(0, 0, 'T');
-		disp_char(0, 7, 'e');
-		disp_char(0, 14, 'm');
-		disp_char(0, 21, 'p');
-			
-		disp_char(0, 35, '0' + temp_tens);
-		disp_char(0, 42, '0' + temp_ones);
-
-		disp_char(2, 0, 'P');
-		disp_char(2, 7, 'o');
-		disp_char(2, 14, 't');
-
-
-		disp_char(2, 28, '0' + tens);
-		disp_char(2, 35, '0' + ones);
-
-		if(temp_avg < pot_avg)
-		{
-			P3 = 0x00;
-			P2 = 0x00;
-
-		}
-		else
-		{
-			P3 = 0xff;
-			P2 = 0xff;
-		}
-		
-	}
-	
-	refresh_screen();
-
-}
-
-	
-   //init_lcd();
-   //for ( ; ; )
-   //{
-     
-   //}
-}
-*/
